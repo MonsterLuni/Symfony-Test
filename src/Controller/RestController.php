@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,13 +17,12 @@ class RestController extends AbstractController
      * @Route("/rest",name="get_index", methods={"GET"})
      */
 
-    public function get(Request $request): JsonResponse
+    public function get(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $test = $request->request->get(key:"test");
+        $test = $request->query->get(key:"input");
 
         return $this->json([
-            'message' => $test,
-            'path' => 'src/Controller/RestController.php',
+            $test
         ]);
     }
 
