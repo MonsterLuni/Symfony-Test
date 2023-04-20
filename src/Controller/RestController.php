@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Haustier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,17 +26,23 @@ class RestController extends AbstractController
             $test
         ]);
     }
-
     /**
-     * @Route("/rest",name="post_index", methods={"POST"})
+     * @Route("/rest",name="create_haustier",methods={"POST"})
      */
-
-    public function post(): JsonResponse
+    public function create(Request $request)
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller! (POST)',
-            'path' => 'src/Controller/RestController.php',
-        ]);
+        $name = $request->request->get(key: "name");
+        $datum = $request->request->get(key: "datum");
+        $gewicht = $request->request->get(key: "gewicht");
+        $groesse = $request->request->get(key: "groesse");
+
+        $haustier = new Haustier();
+        $haustier->setName($name);
+        $haustier->setGeburtsdatum(\DateTime::createFromFormat("d.m.Y",$datum));
+        $haustier->setGewicht($gewicht);
+        $haustier->setGrösse($groesse);
+
+        return $this->json($haustier);
     }
 
     /**
