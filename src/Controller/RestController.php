@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+
 /**
  * @Route("/api", name="api_")
  */
@@ -14,10 +16,12 @@ class RestController extends AbstractController
      * @Route("/rest",name="get_index", methods={"GET"})
      */
 
-    public function get(): JsonResponse
+    public function get(Request $request): JsonResponse
     {
+        $test = $request->request->get(key:"test");
+
         return $this->json([
-            'message' => 'Welcome to your new controller! (GET)',
+            'message' => $test,
             'path' => 'src/Controller/RestController.php',
         ]);
     }
