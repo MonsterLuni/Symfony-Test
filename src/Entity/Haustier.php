@@ -21,7 +21,7 @@ class Haustier
     private ?float $Gewicht = null;
 
     #[ORM\Column]
-    private ?float $Grösse = null;
+    private ?float $Groesse = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $Geburtsdatum = null;
@@ -55,14 +55,14 @@ class Haustier
         return $this;
     }
 
-    public function getGrösse(): ?float
+    public function getGroesse(): ?float
     {
-        return $this->Grösse;
+        return $this->Groesse;
     }
 
-    public function setGrösse(float $Grösse): self
+    public function setGroesse(float $Groesse): self
     {
-        $this->Grösse = $Grösse;
+        $this->Groesse = $Groesse;
 
         return $this;
     }

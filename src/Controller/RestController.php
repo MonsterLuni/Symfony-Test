@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Haustier;
+use App\Repository\HaustierRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,22 +15,11 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class RestController extends AbstractController
 {
-    /**
-     * @Route("/rest",name="get_index", methods={"GET"})
-     */
 
-    public function get(Request $request, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $test = $request->query->get(key:"input");
-
-        return $this->json([
-            $test
-        ]);
-    }
     /**
      * @Route("/rest",name="create_haustier",methods={"POST"})
      */
-    public function create(Request $request)
+    public function create(Request $request, HaustierRepository $repository): JsonResponse
     {
         $name = $request->request->get(key: "name");
         $datum = $request->request->get(key: "datum");
@@ -40,33 +30,75 @@ class RestController extends AbstractController
         $haustier->setName($name);
         $haustier->setGeburtsdatum(\DateTime::createFromFormat("d.m.Y",$datum));
         $haustier->setGewicht($gewicht);
-        $haustier->setGrösse($groesse);
+        $haustier->setGroesse($groesse);
+
+        $repository->save($haustier, true);
 
         return $this->json($haustier);
     }
 
     /**
-     * @Route("/rest",name="put_index", methods={"PUT"})
+     * @Route("/rest/{id}",name="update_haustier", methods={"PUT"})
      */
 
-    public function put(): JsonResponse
+    public function update($id, Request $request, HaustierRepository $repository): JsonResponse
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller! (PUT)',
-            'path' => 'src/Controller/RestController.php',
-        ]);
+        $gewicht = $request->headers->get(key: "gewicht");
+        $groesse = $request->headers->get(key: "groesse");
+
+        $haustierToUpdate = $repository->find($id);
+
+        if($haustierToUpdate){
+            $haustierToUpdate->setGroesse($groesse);
+            $haustierToUpdate->setGewicht($gewicht);
+
+            $repository->save($haustierToUpdate, true);
+
+            return $this->json("Haustier wurde gespeichert.");
+        }
+
+        return $this->json("Kein Haustier für ID " . $id . " gefunden");
+
     }
 
     /**
-     * @Route("/rest",name="put_index", methods={"DELETE"})
+     * @Route("/rest/{id}",name="delete_haustier", methods={"DELETE"})
      */
 
-    public function delete(): JsonResponse
+    public function delete($id, HaustierRepository $repository): JsonResponse
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller! (DELETE)',
-            'path' => 'src/Controller/RestController.php',
-        ]);
+        $haustierToDelete = $repository->find($id);
+        if($haustierToDelete){
+            $repository->remove($haustierToDelete, true);
+
+            return $this->json("Haustier mit ID " . $id . " erfolgreich gelöscht");
+        }
+        return $this->json("Kein Haustier für ID " .$id . " gefunden");
+    }
+
+    /**
+     * @Route("/rest",name="Loadall_index", methods={"GET"})
+     */
+
+    public function loadAll(HaustierRepository $repository, Request $request)
+    {
+        $max_groesse = $request->query->get("groessemax");
+        $min_groesse = $request->query->get("groessemin");
+
+        $haustiere = $repository->filter($max_groesse, $min_groesse);
+
+        $haustierJsonArray = [];
+
+
+        foreach ($haustiere as $haustier){
+            $haustierJsonArray[] = [
+                "name" => $haustier->getName(),
+                "geburtsdatum" => $haustier->getGeburtsdatum(),
+                "gewicht" => $haustier->getGewicht(),
+                "groesse" => $haustier->getGroesse(),
+            ];
+        }
+        return $this->json($haustierJsonArray);
     }
 
 
