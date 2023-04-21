@@ -80,12 +80,17 @@ class RestController extends AbstractController
      * @Route("/rest",name="Loadall_index", methods={"GET"})
      */
 
-    public function loadAll(HaustierRepository $repository, Request $request)
+    public function loadwhatyouwant(HaustierRepository $repository, Request $request)
     {
-        $max_groesse = $request->query->get("groessemax");
-        $min_groesse = $request->query->get("groessemin");
+        $max_groesse = $request->query->get("groessemax") ?? 99998;
+        $min_groesse = $request->query->get("groessemin") ?? 0;
 
-        $haustiere = $repository->filter($max_groesse, $min_groesse);
+        if ($min_groesse == 0 && $max_groesse == 99998){
+            $haustiere = $repository->findAll();
+        }
+        else{
+            $haustiere = $repository->filter($max_groesse, $min_groesse);
+        }
 
         $haustierJsonArray = [];
 

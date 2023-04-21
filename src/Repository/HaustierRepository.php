@@ -39,7 +39,8 @@ class HaustierRepository extends ServiceEntityRepository
         }
     }
 
-    public function filter(int $groesseMax, int $groesseMin){
+    public function filter(int $groesseMax = 9999, int $groesseMin = 0){
+
         return $this->createQueryBuilder('h')
             ->where('h.Groesse < :groesseMax and h.Groesse > :groesseMin')
             ->setParameter('groesseMax', $groesseMax)
