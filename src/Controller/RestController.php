@@ -37,10 +37,10 @@ class RestController extends AbstractController
         return $this->json($haustier);
     }
 
+
     /**
      * @Route("/rest/{id}",name="update_haustier", methods={"PUT"})
      */
-
     public function update($id, Request $request, HaustierRepository $repository): JsonResponse
     {
         $gewicht = $request->headers->get(key: "gewicht");
@@ -61,10 +61,10 @@ class RestController extends AbstractController
 
     }
 
+
     /**
      * @Route("/rest/{id}",name="delete_haustier", methods={"DELETE"})
      */
-
     public function delete($id, HaustierRepository $repository): JsonResponse
     {
         $haustierToDelete = $repository->find($id);
@@ -76,10 +76,10 @@ class RestController extends AbstractController
         return $this->json("Kein Haustier für ID " .$id . " gefunden");
     }
 
+
     /**
      * @Route("/rest",name="Loadall_index", methods={"GET"})
      */
-
     public function loadwhatyouwant(HaustierRepository $repository, Request $request)
     {
         $max_groesse = $request->query->get("groessemax") ?? 99998;
@@ -105,6 +105,4 @@ class RestController extends AbstractController
         }
         return $this->json($haustierJsonArray);
     }
-
-
 }
